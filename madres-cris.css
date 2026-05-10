@@ -1,0 +1,267 @@
+/* ============================================================
+   Día de las Madres · Mamá Cris
+   ============================================================ */
+:root {
+    --bg-trans : 2.8s ease-in-out;
+    --msg-trans: 0.9s cubic-bezier(.4,0,.2,1);
+    --font-title: 'Pacifico', cursive;
+    --font-body : 'Cormorant Garamond', serif;
+    --gold  : #e8c97a;
+    --rose  : #c94b6e;
+    --peach : #f0a080;
+    --wine  : #8b1a3a;
+}
+
+*,*::before,*::after{ margin:0; padding:0; box-sizing:border-box; }
+html,body{ width:100%; height:100%; overflow:hidden; color:#fff; }
+
+.bg-layer{
+    position:fixed; inset:0; z-index:0;
+    opacity:0; transition:opacity var(--bg-trans);
+}
+.bg-layer.active{ opacity:1; }
+
+#bg0{ background:linear-gradient(168deg,#170320 0%,#2c0a30 32%,#481040 62%,#1d0824 100%); }
+#bg1{ background:linear-gradient(172deg,#190226 0%,#481558 24%,#8a2e66 50%,#c84870 80%,#edaa7a 100%); }
+#bg2{ background:linear-gradient(162deg,#13040e 0%,#2c0e1e 28%,#561830 54%,#882840 80%,#c24860 100%); }
+#bg3{ background:linear-gradient(178deg,#1a0614 0%,#380e28 22%,#7a285a 46%,#c45a72 72%,#f0b07a 100%); }
+
+.vignette{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(ellipse at center,
+        transparent 42%,
+        rgba(0,0,0,.18) 68%,
+        rgba(0,0,0,.44) 100%
+    );
+}
+
+#particleCanvas{ position:fixed; inset:0; z-index:2; pointer-events:none; }
+
+.screen{
+    position:relative; z-index:3;
+    width:100%; height:100vh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:1.4vh;
+    padding:2vh 2vw;
+}
+
+.header{ text-align:center; flex-shrink:0; }
+
+.date-badge{
+    display:inline-flex; align-items:center; gap:.5rem;
+    background:rgba(255,255,255,.07);
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:50px;
+    padding:.32rem 1.2rem;
+    font-family:var(--font-body);
+    font-size:clamp(.7rem,1.35vw,.88rem);
+    letter-spacing:2px; text-transform:uppercase;
+    margin-bottom:.6rem;
+    animation:badgeGlow 3.5s ease-in-out infinite;
+}
+@keyframes badgeGlow{
+    0%,100%{ box-shadow:0 0 0 0 rgba(200,72,110,0); }
+    50%    { box-shadow:0 0 22px 7px rgba(200,72,110,.3); }
+}
+
+.title-line-1{
+    font-family:var(--font-title);
+    font-size:clamp(1.9rem, 5.2vw, 4.2rem);
+    font-weight:400;
+    line-height:1.1;
+    margin:0 0 .1rem;
+    background:linear-gradient(
+        100deg,
+        #e8c97a 0%, #ffbad0 16%, #fff 30%,
+        #e8c97a 44%, #f06888 57%, #fff 70%,
+        #f0a080 84%, #e8c97a 100%
+    );
+    background-size:200% 100%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    animation:titleShimmer 3.2s ease-in-out infinite;
+    filter:drop-shadow(0 0 14px rgba(232,201,122,.52))
+           drop-shadow(0 0 32px rgba(200,72,110,.28))
+           drop-shadow(0 4px 6px rgba(0,0,0,.42));
+}
+
+@keyframes titleShimmer{
+    0%  { background-position:0% 50%; }
+    50% { background-position:100% 50%; }
+    100%{ background-position:0% 50%; }
+}
+
+.title-line-2{
+    font-family:var(--font-title);
+    font-size:clamp(3.4rem, 8.5vw, 6.8rem);
+    font-weight:400;
+    line-height:1.1;
+    margin:0;
+    background:linear-gradient(
+        100deg,
+        #f06888 0%, #e8c97a 18%, #fff 34%,
+        #fd79a8 50%, #fff 64%, #e8c97a 80%,
+        #f06888 100%
+    );
+    background-size:220% 100%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    animation:titleShimmer 3.6s ease-in-out infinite;
+    filter:drop-shadow(0 0 16px rgba(240,104,136,.58))
+           drop-shadow(0 0 38px rgba(232,201,122,.3))
+           drop-shadow(0 4px 8px rgba(0,0,0,.46));
+}
+
+.message-zone{
+    flex-shrink:0;
+    width:100%; max-width:680px;
+    position:relative;
+}
+
+.card-glow{
+    position:absolute;
+    inset:-18px -24px;
+    background:radial-gradient(ellipse, rgba(200,72,110,.18) 0%, transparent 68%);
+    filter:blur(14px);
+    animation:cardGlow 3.5s ease-in-out infinite;
+    pointer-events:none; z-index:0;
+}
+@keyframes cardGlow{
+    0%,100%{ opacity:.7; }
+    50%    { opacity:1; }
+}
+
+.message-card{
+    position:relative; z-index:1;
+    min-height:200px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.07);
+    backdrop-filter:blur(22px);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:28px;
+    padding:2rem 2.4rem;
+    box-shadow:0 12px 50px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.1);
+    overflow:hidden;
+}
+
+.message-card::before{
+    content:''; position:absolute;
+    top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,
+        transparent, var(--rose), var(--peach),
+        var(--gold), #fd79a8, var(--peach), transparent);
+    background-size:280% 100%;
+    animation:shimmer 3.2s linear infinite;
+    border-radius:28px 28px 0 0;
+}
+@keyframes shimmer{
+    from{ background-position:-280% 0; }
+    to  { background-position:280% 0; }
+}
+
+.message-card::after{
+    content:''; position:absolute; inset:0;
+    border-radius:28px; padding:1px;
+    background:linear-gradient(135deg,
+        rgba(200,72,110,.35), rgba(232,201,122,.15) 40%,
+        rgba(240,160,128,.2) 70%, rgba(200,72,110,.3)
+    );
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+    pointer-events:none;
+}
+
+.msg{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:2rem 2.4rem;
+    opacity:0;
+    transform:translateY(18px) scale(.95);
+    transition:opacity var(--msg-trans), transform var(--msg-trans);
+    pointer-events:none;
+}
+.msg.active{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    pointer-events:auto;
+}
+
+.mi{
+    font-size:clamp(2rem, 3.6vw, 2.6rem);
+    margin-bottom:.4rem;
+    display:block;
+    animation:iconPop 2.8s ease-in-out infinite;
+}
+@keyframes iconPop{
+    0%,100%{ transform:scale(1) rotate(-3deg); }
+    50%    { transform:scale(1.22) rotate(3deg); }
+}
+
+.msg p{
+    font-family:var(--font-body);
+    font-size:clamp(1.25rem, 2.8vw, 1.7rem);
+    line-height:1.65; max-width:560px;
+    color:rgba(255,255,255,.93);
+    text-align:center; font-weight:300;
+}
+.msg p strong{ color:var(--gold); font-weight:600; }
+
+.footer{
+    flex-shrink:0; text-align:center;
+    display:flex; flex-direction:column;
+    align-items:center; gap:.45rem;
+}
+
+.bouquet-wrap{ display:flex; flex-direction:column; align-items:center; }
+
+.bouquet-svg{
+    width:clamp(170px, 27vw, 250px);
+    height:auto;
+    filter:drop-shadow(0 0 18px rgba(200,72,110,.42))
+           drop-shadow(0 8px 22px rgba(0,0,0,.38));
+    animation:bouquetFloat 3.8s ease-in-out infinite;
+}
+
+@keyframes bouquetFloat{
+    0%,100%{ transform:translateY(0); }
+    50%    { transform:translateY(-8px); }
+}
+
+.rose-side{ animation:rosePulse 4s ease-in-out infinite; }
+.rose-center{ animation:rosePulseCenter 3s ease-in-out infinite; }
+@keyframes rosePulse{
+    0%,100%{ opacity:.92; } 50%{ opacity:1; }
+}
+@keyframes rosePulseCenter{
+    0%,100%{ opacity:.95; } 50%{ opacity:1; }
+}
+
+.footer-love{
+    font-family:var(--font-body);
+    font-size:clamp(.82rem,1.6vw,1rem);
+    opacity:.74; letter-spacing:1px; font-style:italic;
+    margin-top:.2rem;
+}
+
+@media (max-width:520px){
+    .screen{ gap:1vh; padding:1.6vh 3vw; }
+    .message-card{ min-height:170px; padding:1.5rem 1.3rem; border-radius:22px; }
+    .msg{ padding:1.5rem 1.3rem; }
+    .msg p{ font-size:clamp(1.1rem,4.5vw,1.35rem); }
+    .bouquet-svg{ width:clamp(140px,44vw,190px); }
+}
+@media (max-height:600px){
+    .screen{ gap:.85vh; }
+    .title-line-1{ font-size:clamp(1.4rem,3.8vw,2.4rem); }
+    .title-line-2{ font-size:clamp(2rem,5.2vw,3.2rem); }
+    .message-card{ min-height:140px; padding:1rem 1.2rem; }
+    .msg{ padding:1rem 1.2rem; }
+    .mi{ font-size:1.4rem; margin-bottom:.2rem; }
+    .msg p{ font-size:clamp(1rem,2.2vw,1.2rem); }
+}
